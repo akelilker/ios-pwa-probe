@@ -1,0 +1,13 @@
+{
+  "id": "/ios-pwa-probe/bt/",
+  "name": "Probe BT",
+  "short_name": "Probe BT",
+  "start_url": "/ios-pwa-probe/bt/index.html",
+  "scope": "/ios-pwa-probe/bt/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#080d16",
+  "theme_color": "#080d16",
+  "lang": "tr",
+  "icons": [{"src":"icon.png","sizes":"512x512","type":"image/png","purpose":"any"}]
+}

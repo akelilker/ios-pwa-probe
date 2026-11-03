@@ -1,0 +1,13 @@
+{
+  "id": "/ios-pwa-probe/solid/",
+  "name": "Probe Solid",
+  "short_name": "Probe Solid",
+  "start_url": "/ios-pwa-probe/solid/index.html",
+  "scope": "/ios-pwa-probe/solid/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#080d16",
+  "theme_color": "#080d16",
+  "lang": "tr",
+  "icons": [{"src":"icon.png","sizes":"512x512","type":"image/png","purpose":"any"}]
+}

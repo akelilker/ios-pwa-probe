@@ -1,0 +1,13 @@
+{
+  "id": "/ios-pwa-probe/nometa/",
+  "name": "Probe NoMeta",
+  "short_name": "Probe NoMeta",
+  "start_url": "/ios-pwa-probe/nometa/index.html",
+  "scope": "/ios-pwa-probe/nometa/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#080d16",
+  "theme_color": "#080d16",
+  "lang": "tr",
+  "icons": [{"src":"icon.png","sizes":"512x512","type":"image/png","purpose":"any"}]
+}

@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>Probe BT</title>
+<link rel="manifest" href="./manifest.json">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Probe BT">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="apple-touch-icon" href="./icon.png">
+<link rel="icon" href="./icon.png">
+<style>
+  :root{--bg:#080d16;--red:rgba(224,0,0,.78);--footer-h:38px}
+  html,body{margin:0;padding:0;background:var(--bg);color:#d8f5e4;font:12px/1.4 ui-monospace,Menlo,monospace;overflow:hidden;overscroll-behavior:none;width:100%;height:100%;-webkit-text-size-adjust:100%}
+  /* html min-height safe-area telafisi YOK (bilerek) */
+  #probe{position:absolute;visibility:hidden;left:0;top:0;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);padding-left:env(safe-area-inset-left,0px);padding-right:env(safe-area-inset-right,0px)}
+  /* .app-container vekili */
+  #app{position:relative;box-sizing:border-box;height:100dvh;min-height:100dvh;width:100%;max-width:500px;margin:0 auto;padding-top:env(safe-area-inset-top,0px);padding-bottom:var(--footer-h);display:flex;flex-direction:column;overflow:hidden;background:var(--bg)}
+  /* .app-container::before vekili: üst çizgi top = env(safe-area-inset-top) */
+  #frame{position:absolute;left:0;right:0;top:env(safe-area-inset-top,0px);bottom:calc(var(--footer-h) + env(safe-area-inset-bottom,0px));box-sizing:border-box;border:.7px solid var(--red);border-radius:20px 20px 0 0;pointer-events:none;z-index:2;box-shadow:0 0 16px rgba(224,0,0,.24)}
+  #header{margin:14px 12px 0;padding:10px;border:1px solid #345;border-radius:12px;text-align:center;font:700 15px system-ui;color:#fff;position:relative;z-index:3}
+  #btns{margin:8px 12px 0;position:relative;z-index:4}
+  #copy{width:100%;font:700 17px system-ui;color:#fff;background:#b00000;border:1px solid #f66;border-radius:12px;padding:13px}
+  #out{white-space:pre-wrap;word-break:break-word;margin:8px 12px;overflow:auto;flex:1;position:relative;z-index:3;font-size:13px;line-height:1.45;-webkit-user-select:text;user-select:text}
+  #out b{color:#ffd24a}
+  #footer{position:fixed;left:50%;transform:translateX(-50%);bottom:0;width:100%;max-width:500px;height:calc(var(--footer-h) + env(safe-area-inset-bottom,0px));box-sizing:border-box;padding-bottom:env(safe-area-inset-bottom,0px);background:#0b1220;border-top:1px solid rgba(224,0,0,.4);z-index:5;display:flex;align-items:center;justify-content:center;color:#9ab;font:600 12px system-ui}
+
+</style>
+</head>
+<body>
+<div id="probe"></div>
+
+<div id="app">
+  <div id="frame"></div>
+  <div id="header">Probe BT — ÜST ALAN ÖLÇÜMÜ</div>
+  <div id="btns"><button id="copy">Kopyala</button></div>
+  <div id="out">Ölçülüyor…</div>
+</div>
+<div id="footer">FOOTER (fixed, bottom:0)</div>
+<script>
+(function(){
+  var VARIANT='bt';
+  var out=document.getElementById('out'), probe=document.getElementById('probe');
+  function n(v){return (typeof v==='number')?+v.toFixed(1):(v==null?'n/a':v)}
+  function rect(id){var e=typeof id==='string'?document.getElementById(id):id; if(!e)return 'YOK'; var b=e.getBoundingClientRect(); return 'üst='+n(b.top)+' alt='+n(b.bottom)+' yük='+n(b.height)+' gen='+n(b.width);}
+  function mq(q){try{return matchMedia(q).matches}catch(e){return 'n/a'}}
+  function metaVal(){var m=document.querySelector('meta[name="apple-mobile-web-app-status-bar-style"]');return m?m.content:'(YOK)'}
+  var swState='kontrol ediliyor…', regs='?';
+  function swInfo(){
+    if(!('serviceWorker' in navigator)){swState='serviceWorker API yok';return}
+    var c=navigator.serviceWorker.controller;
+    swState=c?('!!! EVET: '+c.scriptURL):'HAYIR (kontrol eden SW yok — beklenen)';
+    navigator.serviceWorker.getRegistrations().then(function(r){regs=r.length+' kayıt'+(r.length?': '+r.map(function(x){return x.scope}).join(', '):'');run()}).catch(function(){regs='okunamadı'});
+  }
+  function run(){
+    var cs=getComputedStyle(probe), vv=window.visualViewport, se=document.scrollingElement||document.documentElement;
+    var fr=getComputedStyle(document.getElementById('frame'));
+    var ua=navigator.userAgent;
+    var L=[
+     '<b>VARYANT:</b> '+VARIANT+'   <b>meta status-bar:</b> '+metaVal(),
+     '<b>navigator.standalone:</b> '+navigator.standalone+'   <b>display-mode standalone:</b> '+mq('(display-mode: standalone)'),
+     '<b>SW KONTROLÜ:</b> '+swState,
+     'SW kayıtları: '+regs,
+     'URL: '+location.href,
+     'iOS/Version: '+((ua.match(/OS ([\d_]+)/)||[])[1]||'n/a')+' / '+((ua.match(/Version\/([\d.]+)/)||[])[1]||'n/a'),
+     '',
+     '<b>— YÜKSEKLİKLER —</b>',
+     'screen.height='+screen.height+'  screen.width='+screen.width+'  DPR='+devicePixelRatio,
+     'innerHeight='+innerHeight+'  innerWidth='+innerWidth,
+     'documentElement.clientHeight='+document.documentElement.clientHeight,
+     'visualViewport.height='+(vv?n(vv.height):'n/a')+'  offsetTop='+(vv?n(vv.offsetTop):'n/a')+'  pageTop='+(vv?n(vv.pageTop):'n/a'),
+     '<b>screen.height − innerHeight = '+(screen.height-innerHeight)+'</b>',
+     'scrollHeight='+se.scrollHeight+'  clientHeight='+se.clientHeight+'  <b>taşma='+(se.scrollHeight-se.clientHeight)+'</b>',
+     '',
+     '<b>— SAFE-AREA (env, canlı) —</b>',
+     'üst='+cs.paddingTop+'  alt='+cs.paddingBottom+'  sol='+cs.paddingLeft+'  sağ='+cs.paddingRight,
+     '',
+     '<b>— SINIRLAR (getBoundingClientRect) —</b>',
+     'html: '+rect(document.documentElement),
+     'body: '+rect(document.body),
+     'container(#app): '+rect('app'),
+     'frame(::before vekili): '+rect('frame')+'  css top='+fr.top,
+     'header: '+rect('header'),
+     'footer(fixed): '+rect('footer'),
+     'topsolid: '+rect('topsolid')
+    ];
+    out.innerHTML=L.join('\n');
+    out._plain=L.join('\n').replace(/<[^>]+>/g,'');
+  }
+  document.getElementById('copy').addEventListener('click',function(){
+    var t=out._plain||out.textContent;
+    var ok=function(){document.getElementById('copy').textContent='Kopyalandı ✔ (yapıştır/gönder)'};
+    try{navigator.clipboard.writeText(t).then(ok,function(){sel()})}catch(e){sel()}
+    function sel(){var r=document.createRange();r.selectNodeContents(out);var s=getSelection();s.removeAllRanges();s.addRange(r);document.getElementById('copy').textContent='Seçildi — Kopyala deyin'}
+  });
+  addEventListener('resize',run); addEventListener('orientationchange',run);
+  if(window.visualViewport){visualViewport.addEventListener('resize',run);visualViewport.addEventListener('scroll',run);}
+  swInfo(); run(); setTimeout(run,500); setTimeout(run,1500);
+})();
+</script>
+</body>
+</html>
