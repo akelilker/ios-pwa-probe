@@ -1,0 +1,13 @@
+{
+  "id": "/ios-pwa-probe/teal/",
+  "name": "Probe Teal",
+  "short_name": "Probe Teal",
+  "start_url": "/ios-pwa-probe/teal/index.html",
+  "scope": "/ios-pwa-probe/teal/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#14a7a0",
+  "theme_color": "#14a7a0",
+  "lang": "tr",
+  "icons": [{"src":"icon.png","sizes":"512x512","type":"image/png","purpose":"any"}]
+}
